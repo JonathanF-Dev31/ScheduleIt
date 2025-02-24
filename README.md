@@ -1,10 +1,10 @@
-# Nombre de la aplicación
+# ScheduleIt
 
-Reemplace este texto con una descripción de su aplicación.
+ScheduleIt is an Android mobile application designed to optimize students' time management in the organization of their language courses. The app offers an intuitive and easy-to-use interface that allows users to schedule and view classes in real time, receive personalized reminders, access interactive support, view class history and progress, and manage cancellations and rescheduling.
 
-Author: Nombre del estudiante
+Author: Jonathan Andres Fernandez
 
-## Referencias
+## References
 
 - [Ideas iniciales de proyecto](docs/ideas.md)
 - [Funcionalidades de la aplicación](docs/funcionalidades.md)
