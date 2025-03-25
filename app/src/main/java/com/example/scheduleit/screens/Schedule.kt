@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Arrangement
 import androidx.navigation.NavController
+import com.example.scheduleit.components.BottomNavBar
+import com.example.scheduleit.components.Header
 
 
 /**
@@ -19,8 +21,11 @@ import androidx.navigation.NavController
 @Composable
 fun Schedule(
     navController: NavController
-) {
-    Scaffold { paddingValues ->
+){
+    Scaffold(
+        topBar = { Header(name = "Name", date = "01/01/2000", time = "00:00:03 AM") },
+        bottomBar = { BottomNavBar(navController) }
+    ) { paddingValues ->
         ScheduleBodyContent(Modifier.padding(paddingValues), navController)
     }
 }

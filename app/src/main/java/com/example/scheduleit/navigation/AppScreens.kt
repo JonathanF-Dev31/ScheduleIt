@@ -5,10 +5,10 @@ package com.example.scheduleit.navigation
  */
 
 sealed class AppScreens(val route: String) {
-    object Home: AppScreens("home_screen")
-    object Login: AppScreens("login_screen")
-    object Profile: AppScreens("profile_screen")
-    object Progress: AppScreens("progress_screen")
-    object Schedule: AppScreens("schedule_screen")
-    object Support: AppScreens("support_screen")
+    object Home: AppScreens(route = "home")
+    object Login: AppScreens(route = "login")
+    object Profile: AppScreens(route ="profile")
+    object Progress: AppScreens(route ="progress")
+    object Schedule: AppScreens(route ="schedule")
+    object Support: AppScreens(route ="support")
 }

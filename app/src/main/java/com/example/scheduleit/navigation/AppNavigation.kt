@@ -10,6 +10,7 @@ import com.example.scheduleit.screens.Profile
 import com.example.scheduleit.screens.Progress
 import com.example.scheduleit.screens.Schedule
 import com.example.scheduleit.screens.Support
+import com.example.scheduleit.components.BottomNavBar
 
 /**
  * Created by JonathanDev31 on 19/03/2025
@@ -17,7 +18,7 @@ import com.example.scheduleit.screens.Support
 @Composable
 fun AppNavigation () {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AppScreens.Login.route){
+    NavHost(navController = navController, startDestination = AppScreens.Home.route){
         composable(route = AppScreens.Home.route){
             Home(navController)
         }
