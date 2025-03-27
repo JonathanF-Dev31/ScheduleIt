@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -14,8 +15,9 @@ import com.example.scheduleit.navigation.AppScreens
 @Composable
 fun BottomNavBar(navController: NavController) {
     val items = listOf(
-        AppScreens.Home to Icons.Filled.Home,
+        AppScreens.Progress to Icons.Filled.Done,
         AppScreens.Schedule to Icons.Default.DateRange,
+        AppScreens.Home to Icons.Filled.Home,
         AppScreens.Profile to Icons.Filled.Person,
         AppScreens.Support to Icons.Filled.Info
     )

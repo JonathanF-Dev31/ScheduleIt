@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBarsPadding
 
 @Composable
 fun Header(name: String, date: String, time: String) {
@@ -17,6 +19,7 @@ fun Header(name: String, date: String, time: String) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFFAEA2C6))
+            .statusBarsPadding()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
