@@ -18,7 +18,7 @@ import com.example.scheduleit.components.BottomNavBar
 @Composable
 fun AppNavigation () {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AppScreens.Home.route){
+    NavHost(navController = navController, startDestination = AppScreens.Login.route){
         composable(route = AppScreens.Home.route){
             Home(navController)
         }
