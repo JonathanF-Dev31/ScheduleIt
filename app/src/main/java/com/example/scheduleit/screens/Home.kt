@@ -1,5 +1,6 @@
 package com.example.scheduleit.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +37,15 @@ fun Home(navController: NavController) {
         topBar = { Header(name = "Name", date = "01/01/2000", time = "00:00:03 AM") },
         bottomBar = { BottomNavBar(navController) }
     ) { paddingValues ->
-        HomeBodyContent(Modifier.padding(paddingValues))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            HomeBodyContent(modifier = Modifier.padding(paddingValues))
+        }
     }
 }
 
@@ -85,6 +94,7 @@ fun ScheduledClassCard(title: String, date: String, time: String, link: String) 
                     text = title,
                     fontSize = 16.sp,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    color = Color.Black,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -93,7 +103,8 @@ fun ScheduledClassCard(title: String, date: String, time: String, link: String) 
                     contentDescription = "Remove class",
                     modifier = Modifier
                         .size(24.dp)
-                        .offset(y = (0).dp)
+                        .offset(y = (0).dp),
+                            tint = Color.Black
                 )
             }
             Text(text = "Link: $link", fontSize = 12.sp, color = Color.Blue)
