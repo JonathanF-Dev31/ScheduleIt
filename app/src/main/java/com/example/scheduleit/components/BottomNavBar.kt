@@ -27,9 +27,16 @@ fun BottomNavBar(navController: NavController) {
 
         items.forEach { (screen, iconLabelPair) ->
             NavigationBarItem(
-                icon = { Icon(iconLabelPair.first, contentDescription = iconLabelPair.second) },
-                label = { Text(iconLabelPair.second) },
+                icon = { Icon(iconLabelPair.first, contentDescription = iconLabelPair.second, tint = Color(0xFF7C7C7C)) },
+                label = { Text(iconLabelPair.second, color = Color(0xFF7C7C7C)) },
                 selected = currentRoute == screen.route,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF7C7C7C),  // Color del ícono seleccionado
+                    selectedTextColor = Color(0xFF7C7C7C),  // Color del texto seleccionado
+                    unselectedIconColor = Color(0xFF7C7C7C), // Color del ícono no seleccionado
+                    unselectedTextColor = Color(0xFF7C7C7C), // Color del texto no seleccionado
+                    indicatorColor = Color(0xFFE4E5F6)  // Color de fondo de selección
+                ),
                 onClick = {
                     println("Navegando a: ${screen.route}")
                     navController.navigate(screen.route) {
@@ -38,7 +45,7 @@ fun BottomNavBar(navController: NavController) {
                     }
                 }
             )
+
         }
     }
 }
-
