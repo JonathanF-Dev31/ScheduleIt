@@ -41,7 +41,7 @@ fun Schedule(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {},
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9B96B0)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
                 shape = RoundedCornerShape(32.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {

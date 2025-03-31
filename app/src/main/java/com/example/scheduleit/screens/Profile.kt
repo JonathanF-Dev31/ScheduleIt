@@ -48,7 +48,7 @@ fun ProfileBodyContent(modifier: Modifier = Modifier, navController: NavControll
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {},
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF74708C)),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
             shape = RoundedCornerShape(32.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
