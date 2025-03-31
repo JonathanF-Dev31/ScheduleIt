@@ -15,19 +15,20 @@ import com.example.scheduleit.navigation.AppScreens
 @Composable
 fun BottomNavBar(navController: NavController) {
     val items = listOf(
-        AppScreens.Progress to Icons.Filled.Done,
-        AppScreens.Schedule to Icons.Default.DateRange,
-        AppScreens.Home to Icons.Filled.Home,
-        AppScreens.Profile to Icons.Filled.Person,
-        AppScreens.Support to Icons.Filled.Info
+        AppScreens.Progress to Pair(Icons.Filled.Done, "Progress"),
+        AppScreens.Schedule to Pair(Icons.Default.DateRange, "Schedule"),
+        AppScreens.Home to Pair(Icons.Filled.Home, "Home"),
+        AppScreens.Profile to Pair(Icons.Filled.Person, "Profile"),
+        AppScreens.Support to Pair(Icons.Filled.Info, "Support")
     )
 
     NavigationBar(containerColor = Color.White) {
         val currentRoute = navController.currentDestination?.route
 
-        items.forEach { (screen, icon) ->
+        items.forEach { (screen, iconLabelPair) ->
             NavigationBarItem(
-                icon = { Icon(icon, contentDescription = null) },
+                icon = { Icon(iconLabelPair.first, contentDescription = iconLabelPair.second) },
+                label = { Text(iconLabelPair.second) },
                 selected = currentRoute == screen.route,
                 onClick = {
                     println("Navegando a: ${screen.route}")
