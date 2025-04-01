@@ -22,7 +22,7 @@ import com.example.scheduleit.components.Header
 @Composable
 fun Progress(navController: NavController) {
     Scaffold(
-        topBar = { Header(name = "JONATHAN", date = "23/02/2025", time = "12:26:03 AM") },
+        topBar = { Header(name = "Jonathan", date = "23/02/2025", time = "12:26:03 AM") },
         bottomBar = { BottomNavBar(navController) }
     ) { paddingValues ->
         ProgressBodyContent(
@@ -45,7 +45,7 @@ fun ProgressBodyContent(modifier: Modifier = Modifier) {
         Button(
             onClick = {},
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(32.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Your progress", color = Color.White, fontSize = 16.sp)

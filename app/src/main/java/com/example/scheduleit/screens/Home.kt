@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.scheduleit.navigation.AppScreens
 import com.example.scheduleit.components.Header
 import com.example.scheduleit.components.BottomNavBar
 import androidx.compose.ui.graphics.Color
@@ -34,7 +32,7 @@ import androidx.compose.material.icons.filled.Close
 @Composable
 fun Home(navController: NavController) {
     Scaffold(
-        topBar = { Header(name = "Name", date = "01/01/2000", time = "00:00:03 AM") },
+        topBar = { Header(name = "Jonathan", date = "23/02/2025", time = "12:26:03 AM") },
         bottomBar = { BottomNavBar(navController) }
     ) { paddingValues ->
         Column(
