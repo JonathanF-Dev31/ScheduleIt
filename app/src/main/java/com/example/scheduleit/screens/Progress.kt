@@ -38,8 +38,7 @@ fun ProgressBodyContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
@@ -68,11 +67,18 @@ fun ProgressBodyContent(modifier: Modifier = Modifier) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        LevelProgress("Level A1", 100, "72 of 72")
-        LevelProgress("Level A2", 100, "72 of 72", Color(0xFFE4B3E5))
-        LevelProgress("Level B1", 20, "15 of 72", Color(0xFF6F6693))
-
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+        ){
+            Column {
+                LevelProgress("Level A1", 100, "72 of 72")
+                LevelProgress("Level A2", 100, "72 of 72", Color(0xFFE4B3E5))
+                LevelProgress("Level B1", 20, "15 of 72", Color(0xFF6F6693))
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
