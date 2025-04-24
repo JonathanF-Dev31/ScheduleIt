@@ -88,8 +88,8 @@ fun ProfileBodyContent(modifier: Modifier = Modifier, navController: NavControll
 
         Spacer(modifier = Modifier.height(24.dp))
         ProfileInfoItem(icon = R.drawable.profile, label = "Name", value = "Jonathan Fernandez")
-        ProfileInfoItem(icon = R.drawable.mail, label = "E-mail", value = "jonathan.afo31@gmail.com")
-        ProfileInfoItem(icon = R.drawable.phone, label = "Phone", value = "+57 324 5413064")
+        ProfileInfoItem(icon = R.drawable.mail, label = "E-mail", value = "example@gmail.com")
+        ProfileInfoItem(icon = R.drawable.phone, label = "Phone", value = "+57 123 456 7890")
         ProfileInfoItem(icon = R.drawable.school, label = "Level", value = "A2")
     }
 }
