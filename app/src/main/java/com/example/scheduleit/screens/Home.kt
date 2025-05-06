@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.ui.unit.dp
@@ -22,8 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-
-
+import com.example.scheduleit.models.ScheduledClass
 
 
 /**
@@ -49,6 +50,13 @@ fun Home(navController: NavController) {
 
 @Composable
 fun HomeBodyContent(modifier: Modifier = Modifier) {
+
+    val scheduledClasses = listOf(
+        ScheduledClass("INA2 Class 8 / Office: Fontibon", "24/09/2025", "08:00 - 09:00", "https://github.com/JonathanF-Dev31"),
+        ScheduledClass("INA2 Exam / Office: Fontibon", "24/09/2025", "07:30 - 08:00", "https://github.com/aleherrera23"),
+        ScheduledClass("INA2 Class 9 / Office: Fontibon", "24/09/2025", "09:00 - 10:00", "https://localhost")
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -66,11 +74,19 @@ fun HomeBodyContent(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ScheduledClassCard("INA2 Class 8 / Office: Fontibon", "24/09/2025", "08:00 - 09:00", "https://github.com/JonathanF-Dev31")
-        ScheduledClassCard("INA2 Exam / Office: Fontibon", "24/09/2025", "07:30 - 08:00", "https://github.com/aleherrera23")
-        ScheduledClassCard("INA2 Class 9 / Office: Fontibon", "24/09/2025", "09:00 - 10:00", "https://localhost")
+        LazyColumn {
+            items(scheduledClasses) { scheduledClass ->
+                ScheduledClassCard(
+                    title = scheduledClass.title,
+                    date = scheduledClass.date,
+                    time = scheduledClass.time,
+                    link = scheduledClass.link
+                )
+            }
+        }
     }
 }
+
 
 @Composable
 fun ScheduledClassCard(title: String, date: String, time: String, link: String) {

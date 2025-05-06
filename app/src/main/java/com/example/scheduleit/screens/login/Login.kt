@@ -1,4 +1,4 @@
-package com.example.scheduleit.screens
+package com.example.scheduleit.screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.scheduleit.R
 import com.example.scheduleit.components.Header
+import com.example.scheduleit.navigation.AppScreens
 
 /**
  * Created by JonathanDev31 on 19/03/2025
@@ -35,7 +36,12 @@ fun Login(navController: NavController) {
 }
 
 @Composable
-fun LoginBodyContent(modifier: Modifier = Modifier, navController: NavController) {
+fun LoginBodyContent(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -104,7 +110,13 @@ fun LoginBodyContent(modifier: Modifier = Modifier, navController: NavController
 
 
         Button(
-            onClick = { navController.navigate("home") },
+            onClick = {
+                viewModel.signInWithEmailAndPassword(
+                    email,
+                    password){
+                    navController.navigate(AppScreens.Home.route)
+                }
+            },
             modifier = Modifier
                 .width(340.dp)
                 .padding(horizontal = 16.dp, vertical = 20.dp)

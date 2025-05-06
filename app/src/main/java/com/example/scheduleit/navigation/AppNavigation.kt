@@ -5,12 +5,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.scheduleit.screens.Home
-import com.example.scheduleit.screens.Login
+import com.example.scheduleit.screens.login.Login
 import com.example.scheduleit.screens.Profile
 import com.example.scheduleit.screens.Progress
 import com.example.scheduleit.screens.Schedule
 import com.example.scheduleit.screens.Support
-import com.example.scheduleit.components.BottomNavBar
 
 /**
  * Created by JonathanDev31 on 19/03/2025
