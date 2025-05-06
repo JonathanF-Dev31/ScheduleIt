@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "743861869443",
+    "project_id": "scheduleit-82c66",
+    "storage_bucket": "scheduleit-82c66.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743861869443:android:e98802528a144bffb874b6",
+        "android_client_info": {
+          "package_name": "com.example.scheduleit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDm1eCSKF0KBPeiI6SQ98JXlHNF65H23w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
