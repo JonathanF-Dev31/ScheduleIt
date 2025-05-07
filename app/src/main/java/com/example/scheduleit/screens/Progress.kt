@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,12 +19,26 @@ import androidx.compose.foundation.verticalScroll
 import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
+import com.example.scheduleit.components.getCurrentDateTime
+import com.example.scheduleit.components.fetchUserName
+
 
 @Composable
 fun Progress(navController: NavController) {
+    var name by remember { mutableStateOf("Usuario") }
+    val (date, time) = getCurrentDateTime()
+
+    LaunchedEffect(Unit) {
+        fetchUserName { userName -> name = userName }
+    }
+
     Scaffold(
-        topBar = { Header(name = "Jonathan", date = "23/02/2025", time = "12:26:03 AM") },
-        bottomBar = { BottomNavBar(navController) }
+        topBar = {
+            Header(name = name, date = date, time = time)
+        },
+        bottomBar = {
+            BottomNavBar(navController)
+        }
     ) { paddingValues ->
         ProgressBodyContent(
             Modifier
@@ -32,6 +47,7 @@ fun Progress(navController: NavController) {
         )
     }
 }
+
 
 @Composable
 fun ProgressBodyContent(modifier: Modifier = Modifier) {

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.material3.Button
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -25,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import com.example.scheduleit.models.ScheduledClass
+import com.example.scheduleit.components.getCurrentDateTime
+import com.example.scheduleit.components.fetchUserName
 
 
 /**
@@ -32,8 +35,16 @@ import com.example.scheduleit.models.ScheduledClass
  */
 @Composable
 fun Home(navController: NavController) {
+    var name by remember { mutableStateOf("Usuario") }
+    val (date, time) = getCurrentDateTime()
+
+    // Cargar el nombre del usuario de manera asíncrona
+    LaunchedEffect(Unit) {
+        fetchUserName { userName -> name = userName }
+    }
+
     Scaffold(
-        topBar = { Header(name = "Jonathan", date = "23/02/2025", time = "12:26:03 AM") },
+        topBar = { Header(name = name, date = date, time = time) },
         bottomBar = { BottomNavBar(navController) }
     ) { paddingValues ->
         Column(
@@ -118,7 +129,7 @@ fun ScheduledClassCard(title: String, date: String, time: String, link: String) 
                     modifier = Modifier
                         .size(24.dp)
                         .offset(y = (0).dp),
-                            tint = Color.Black
+                    tint = Color.Black
                 )
             }
             Text(text = "Link: $link", fontSize = 12.sp, color = Color.Blue)

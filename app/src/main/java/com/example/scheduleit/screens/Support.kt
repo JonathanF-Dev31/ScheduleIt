@@ -16,11 +16,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
+import com.example.scheduleit.components.getCurrentDateTime
+import com.example.scheduleit.components.fetchUserName
 
 @Composable
 fun Support(navController: NavController) {
+    var name by remember { mutableStateOf("Usuario") }
+    val (date, time) = getCurrentDateTime()
+
+    LaunchedEffect(Unit) {
+        fetchUserName { userName -> name = userName }
+    }
+
     Scaffold(
-        topBar = { Header(name = "Jonathan", date = "23/02/2025", time = "12:26:03 AM") },
+        topBar = { Header(name = name, date = date, time = time) },
         bottomBar = { BottomNavBar(navController) }
     ) { paddingValues ->
         SupportBodyContent(Modifier.padding(paddingValues))
