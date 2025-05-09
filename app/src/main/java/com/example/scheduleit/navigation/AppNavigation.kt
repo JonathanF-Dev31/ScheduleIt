@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.scheduleit.screens.Home
+import com.example.scheduleit.screens.home.Home
 import com.example.scheduleit.screens.login.Login
-import com.example.scheduleit.screens.Profile
+import com.example.scheduleit.screens.profile.Profile
 import com.example.scheduleit.screens.Progress
 import com.example.scheduleit.screens.Schedule
 import com.example.scheduleit.screens.Support

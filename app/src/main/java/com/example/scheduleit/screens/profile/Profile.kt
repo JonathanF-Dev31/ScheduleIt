@@ -1,4 +1,4 @@
-package com.example.scheduleit.screens
+package com.example.scheduleit.screens.profile
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -8,8 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,25 +19,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.scheduleit.R
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
-import com.example.scheduleit.components.getCurrentDateTime
-import com.example.scheduleit.components.fetchUserName
+import com.example.scheduleit.models.User
+
 
 @Composable
 fun Profile(navController: NavController) {
-    var name by remember { mutableStateOf("Usuario") }
-    val (date, time) = getCurrentDateTime()
-
-    LaunchedEffect(Unit) {
-        fetchUserName { userName -> name = userName }
-    }
 
     Scaffold(
         topBar = {
-            Header(name = name, date = date, time = time)
+            Header()
         },
         bottomBar = {
             BottomNavBar(navController)
@@ -48,7 +44,10 @@ fun Profile(navController: NavController) {
 
 
 @Composable
-fun ProfileBodyContent(modifier: Modifier = Modifier, navController: NavController) {
+fun ProfileBodyContent(modifier: Modifier = Modifier, navController: NavController, viewModel: ProfileViewModel = viewModel()) {
+
+    val user: State<User?> = viewModel.user.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -98,13 +97,14 @@ fun ProfileBodyContent(modifier: Modifier = Modifier, navController: NavControll
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-        ProfileInfoItem(icon = R.drawable.profile, label = "Name", value = "Jonathan Fernandez")
-        ProfileInfoItem(icon = R.drawable.mail, label = "E-mail", value = "example@gmail.com")
-        ProfileInfoItem(icon = R.drawable.phone, label = "Phone", value = "+57 123 456 7890")
-        ProfileInfoItem(icon = R.drawable.school, label = "Level", value = "A2")
+
+        ProfileInfoItem(icon = R.drawable.profile, label = "Name", value = user.value?.name.toString() )
+        ProfileInfoItem(icon = R.drawable.mail, label = "E-mail", value = user.value?.email.toString())
+        ProfileInfoItem(icon = R.drawable.phone, label = "Phone", value = user.value?.phone.toString())
+        ProfileInfoItem(icon = R.drawable.school, label = "Level", value = user.value?.currentlyLevel.toString())
+
     }
 }
-
 
 @Composable
 fun ProfileInfoItem(icon: Int, label: String, value: String) {

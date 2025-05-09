@@ -12,9 +12,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.scheduleit.models.User
+import com.example.scheduleit.screens.home.HomeViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
-fun Header(name: String, date: String = "", time: String = "", isLoginScreen: Boolean = false) {
+fun Header(isLoginScreen: Boolean = false, viewModel: HomeViewModel = viewModel()) {
+
+    val (date, time) = getCurrentDateTime()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,7 +50,12 @@ fun Header(name: String, date: String = "", time: String = "", isLoginScreen: Bo
                 color = Color.White
             )
         } else {
+
+            val user: State<User?> = viewModel.user.collectAsState()
+            val name = user.value?.name.toString()
+
             Text(
+
                 text = "HI! $name",
                 fontSize = 20.sp,
                 color = Color.White
@@ -57,5 +72,11 @@ fun Header(name: String, date: String = "", time: String = "", isLoginScreen: Bo
             )
         }
     }
+}
+
+fun getCurrentDateTime(): Pair<String, String> {
+    val date = SimpleDateFormat("dd/MM/yyyy").format(Date())
+    val time = SimpleDateFormat("hh:mm:ss a").format(Date())
+    return Pair(date, time)
 }
 

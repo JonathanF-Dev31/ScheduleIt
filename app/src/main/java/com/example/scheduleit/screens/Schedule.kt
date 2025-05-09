@@ -24,7 +24,7 @@ import java.util.Calendar
 fun Schedule(navController: NavController) {
     Scaffold(
         topBar = {
-            Header(name = "Jonathan", date = "23/02/2025", time = "12:26:03 AM")
+            Header()
         },
         bottomBar = {
             BottomNavBar(navController)

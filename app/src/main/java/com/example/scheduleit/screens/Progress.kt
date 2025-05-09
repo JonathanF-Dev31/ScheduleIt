@@ -19,22 +19,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
-import com.example.scheduleit.components.getCurrentDateTime
-import com.example.scheduleit.components.fetchUserName
-
+import com.example.scheduleit.models.User
+import com.example.scheduleit.screens.profile.ProfileViewModel
 
 @Composable
 fun Progress(navController: NavController) {
-    var name by remember { mutableStateOf("Usuario") }
-    val (date, time) = getCurrentDateTime()
-
-    LaunchedEffect(Unit) {
-        fetchUserName { userName -> name = userName }
-    }
 
     Scaffold(
         topBar = {
-            Header(name = name, date = date, time = time)
+            Header()
         },
         bottomBar = {
             BottomNavBar(navController)
@@ -51,6 +44,7 @@ fun Progress(navController: NavController) {
 
 @Composable
 fun ProgressBodyContent(modifier: Modifier = Modifier) {
+
     Column(
         modifier = modifier
             .fillMaxSize()

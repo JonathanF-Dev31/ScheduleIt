@@ -29,7 +29,7 @@ import com.example.scheduleit.navigation.AppScreens
 @Composable
 fun Login(navController: NavController) {
     Scaffold(
-        topBar = { Header(name = "Student", isLoginScreen = true) }
+        topBar = { Header(isLoginScreen = true) }
     ) { paddingValues ->
         LoginBodyContent(Modifier.padding(paddingValues), navController)
     }
@@ -44,6 +44,24 @@ fun LoginBodyContent(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+
+    fun isEmailValid(): Boolean {
+        return email.isNotEmpty() && email.contains("@") && email.contains(".")
+    }
+
+    fun isPasswordValid(): Boolean {
+        return password.isNotEmpty() && password.length >= 5
+    }
+
+    fun validateInputs(): Boolean {
+        emailError = if (email.isEmpty()) "Email is required" else if (!isEmailValid()) "Invalid email format, you need use an extensión @ valid" else ""
+        passwordError = if (password.isEmpty()) "Password is required" else if (!isPasswordValid()) "Password must be at least 8 characters" else ""
+
+        return emailError.isEmpty() && passwordError.isEmpty()
+    }
 
     Column(
         modifier
@@ -67,16 +85,21 @@ fun LoginBodyContent(
             placeholder = { Text("example@example.com") },
             textStyle = TextStyle(color = Color(0xFF54505A)),
             shape = RoundedCornerShape(4.dp),
+            isError = emailError.isNotEmpty(),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
+                focusedContainerColor =  Color(0xFFFFFFFF),
+                unfocusedContainerColor =  Color(0xFFFFFFFF),
                 focusedIndicatorColor = Color(0xFF8F5BBD),
-                unfocusedIndicatorColor = Color(0xFF89858E)
+                unfocusedIndicatorColor = Color(0xFF89858E),
+                errorIndicatorColor = Color(0xFFFF0000)
             ),
             modifier = Modifier
                 .width(340.dp)
                 .padding(horizontal = 16.dp, vertical = 5.dp)
         )
+        if (emailError.isNotEmpty()) {
+            Text(text = emailError, color = Color(0xFFFF0000), fontSize = 12.sp, modifier = Modifier.padding(start = 16.dp))
+        }
 
         var passwordVisible by remember { mutableStateOf(false) }
 
@@ -97,24 +120,31 @@ fun LoginBodyContent(
                     )
                 }
             },
+            isError = passwordError.isNotEmpty(),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color(0xFFFFFFFF),
+                unfocusedContainerColor = Color(0xFFFFFFFF),
                 focusedIndicatorColor = Color(0xFF8F5BBD),
-                unfocusedIndicatorColor = Color(0xFF89858E)
+                unfocusedIndicatorColor = Color(0xFF89858E),
+                errorIndicatorColor = Color(0xFFFF0000)
             ),
             modifier = Modifier
                 .width(340.dp)
                 .padding(horizontal = 16.dp, vertical = 0.dp)
         )
-
+        if (passwordError.isNotEmpty()) {
+            Text(text = passwordError, color = Color.Red, fontSize = 12.sp, modifier = Modifier.padding(start = 16.dp))
+        }
 
         Button(
             onClick = {
-                viewModel.signInWithEmailAndPassword(
-                    email,
-                    password){
-                    navController.navigate(AppScreens.Home.route)
+                if (validateInputs()) {
+                    viewModel.signInWithEmailAndPassword(
+                        email,
+                        password
+                    ) {
+                        navController.navigate(AppScreens.Home.route)
+                    }
                 }
             },
             modifier = Modifier
@@ -162,7 +192,6 @@ fun LoginBodyContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -188,4 +217,3 @@ fun LoginBodyContent(
 
     }
 }
-
