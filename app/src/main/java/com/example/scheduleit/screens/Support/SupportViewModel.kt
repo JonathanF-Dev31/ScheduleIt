@@ -23,28 +23,22 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-// ViewModel para manejar los mensajes del chat
 class SupportViewModel : ViewModel() {
 
-    // Lista de mensajes del chat
     private val _chatMessages = MutableStateFlow<List<String>>(emptyList())
     val chatMessages: StateFlow<List<String>> get() = _chatMessages
 
-    // Función para enviar un mensaje
     fun sendMessage(message: String) {
-        // Añadir el mensaje al listado de chat
         _chatMessages.value = _chatMessages.value + message
     }
 }
 
-// Composable que muestra la interfaz de usuario del soporte
 @Composable
 fun Support(navController: NavController) {
     val viewModel: SupportViewModel = viewModel()
 
     var isLoading by remember { mutableStateOf(true) }
 
-    // Simulamos una carga inicial
     LaunchedEffect(true) {
         delay(500)
         isLoading = false
@@ -66,7 +60,6 @@ fun Support(navController: NavController) {
 
 @Composable
 fun SupportBodyContent(modifier: Modifier = Modifier, viewModel: SupportViewModel) {
-    // Recibimos el estado de los mensajes desde el ViewModel
     val chatMessages by viewModel.chatMessages.collectAsState()
 
     Column(
@@ -87,7 +80,6 @@ fun SupportBodyContent(modifier: Modifier = Modifier, viewModel: SupportViewMode
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mostrar todos los mensajes del chat
         chatMessages.forEachIndexed { index, message ->
             ChatBubble(
                 text = message,
@@ -98,7 +90,6 @@ fun SupportBodyContent(modifier: Modifier = Modifier, viewModel: SupportViewMode
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Campo de entrada de texto para enviar mensajes
         ChatInput { message ->
             if (message.isNotBlank()) {
                 viewModel.sendMessage(message)
@@ -147,7 +138,7 @@ fun ChatInput(onMessageSend: (String) -> Unit) {
             IconButton(onClick = {
                 if (text.isNotBlank()) {
                     onMessageSend(text)
-                    text = "" // Limpiar el campo de texto después de enviar
+                    text = ""
                 }
             }) {
                 Icon(Icons.Filled.Send, contentDescription = "Send", tint = Color(0xFFD9D9D9))
