@@ -8,7 +8,7 @@ import com.example.scheduleit.screens.home.Home
 import com.example.scheduleit.screens.login.Login
 import com.example.scheduleit.screens.profile.Profile
 import com.example.scheduleit.screens.Progress
-import com.example.scheduleit.screens.Schedule
+import com.example.scheduleit.screens.schedule.Schedule
 import com.example.scheduleit.screens.Support
 
 /**

@@ -1,4 +1,4 @@
-package com.example.scheduleit.screens
+package com.example.scheduleit.screens.schedule
 
 import android.app.DatePickerDialog
 import android.content.Context

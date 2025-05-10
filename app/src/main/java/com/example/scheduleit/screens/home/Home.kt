@@ -1,6 +1,8 @@
 package com.example.scheduleit.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,16 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import com.example.scheduleit.models.Class
-import com.example.scheduleit.models.User
-
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 /**
  * Created by JonathanDev31 on 19/03/2025
  */
 
 @Composable
-fun Home(navController: NavController, viewModel: HomeViewModel = HomeViewModel()) {
+fun Home(navController: NavController) {
 
     Scaffold(
         topBar = { Header() },
@@ -53,6 +53,92 @@ fun Home(navController: NavController, viewModel: HomeViewModel = HomeViewModel(
 }
 
 @Composable
-fun HomeBodyContent(modifier: Modifier = Modifier) {
+fun HomeBodyContent(modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel()) {
 
+    val classes by viewModel.classes.collectAsState()
+
+    Log.d("HomeBodyContent", "Classes size: ${classes.size}")
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(
+            onClick = {},
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
+            shape = RoundedCornerShape(32.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Scheduled classes", color = Color.White, fontSize = 16.sp)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (classes.isEmpty()) {
+            Text(text = "No classes available")
+        } else {
+            LazyColumn {
+                items(classes) { classItem ->
+                    ScheduledClassCard(
+                        classId = classItem.title ?: return@items,
+                        title = classItem.description ?: "No title",
+                        date = classItem.date ?: "No date",
+                        time = classItem.time ?: "No time",
+                        link = classItem.link ?: "No link",
+                        onRemove = { classId -> viewModel.removeClassFromUserSchedule(classId) }
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+
+@Composable
+fun ScheduledClassCard(
+    classId: String,
+    title: String,
+    date: String,
+    time: String,
+    link: String,
+    onRemove: (String) -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE4E5F6)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "Date: $date - Time: $time", fontSize = 12.sp, color = Color.Gray)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Remove class",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { onRemove(classId) },
+                    tint = Color.Black
+                )
+            }
+            Text(text = "Link: $link", fontSize = 12.sp, color = Color.Blue)
+        }
+
+    }
 }
