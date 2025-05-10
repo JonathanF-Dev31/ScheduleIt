@@ -27,9 +27,21 @@ class ScheduleViewModel: ViewModel() {
     private val _completedClasses: MutableStateFlow<List<Class>> = MutableStateFlow(emptyList())
     val completedClasses: StateFlow<List<Class>> = _completedClasses
 
-    // Estado de carga
+    private val _classSelections: MutableStateFlow<Map<Int, Boolean>> = MutableStateFlow(emptyMap())
+    val classSelections: StateFlow<Map<Int, Boolean>> = _classSelections
+
+    private val _classes: MutableStateFlow<List<Class>> = MutableStateFlow(emptyList())
+    val classes: StateFlow<List<Class>> = _classes
+
+    fun toggleClassSelection(classId: Int, isSelected: Boolean) {
+        val updatedSelections = classSelections.value.toMutableMap()
+        updatedSelections[classId] = isSelected
+        _classSelections.value = updatedSelections
+    }
+
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
 
     init {
         getUser()
@@ -55,39 +67,72 @@ class ScheduleViewModel: ViewModel() {
     }
 
     fun getAllCompletedClasses(userEmail: String) {
-        _isLoading.value = true // Inicia la carga
+        _isLoading.value = true
+        db.collection("class")
+            .addSnapshotListener { classSnapshot, e ->
+                if (e != null) {
+                    Log.e("Firestore", "Error escuchando cambios en las clases", e)
+                    return@addSnapshotListener
+                }
 
-        db.collection("users")
-            .document(userEmail)
+                val completedClasses = user.value?.completedClasses ?: emptyList()
+
+                val allClasses = classSnapshot?.documents ?: emptyList()
+
+                val notCompletedClasses = allClasses.filter { classDoc ->
+                    val classTitle = classDoc.id
+                    !completedClasses.contains(classTitle)
+                }
+
+                val remainingClasses = notCompletedClasses
+                    .mapNotNull { doc -> doc.toObject(Class::class.java) }
+                    .sortedBy { it.id }
+
+                _completedClasses.value = remainingClasses
+                _classes.value = remainingClasses
+
+            }
+    }
+
+    fun addClassToSchedule(userEmail: String, classItem: Class, date: String, hour: String) {
+        val userDocRef = db.collection("users").document(userEmail)
+
+        userDocRef.collection("scheduleClasses")
             .get()
-            .addOnSuccessListener { userSnapshot ->
-                val completedClasses = userSnapshot.get("completedClasses") as? List<String> ?: emptyList()
+            .addOnSuccessListener { querySnapshot ->
 
-                db.collection("class")
-                    .get()
-                    .addOnSuccessListener { classSnapshot ->
-                        val allClasses = classSnapshot.documents
+                val newClassDocumentName = classItem.title
 
-                        val notCompletedClasses = allClasses.filter { classDoc ->
-                            val classTitle = classDoc.id
-                            !completedClasses.contains(classTitle)
-                        }
+                val classData = hashMapOf(
+                    "id" to classItem.id,
+                    "title" to classItem.title,
+                    "description" to classItem.description,
+                    "level" to classItem.level,
+                    "time" to hour,
+                    "date" to date,
+                )
 
-                        val remainingClasses = notCompletedClasses.mapNotNull { doc ->
-                            doc.toObject(Class::class.java)
-                        }
+                userDocRef.collection("scheduleClasses")
+                    .document(newClassDocumentName!!)
+                    .set(classData)
+                    .addOnSuccessListener {
+                        Log.d("ScheduleViewModel", "Class added successfully with name $newClassDocumentName")
 
-                        _completedClasses.value = remainingClasses
-                        _isLoading.value = false // Termina la carga
+                        userDocRef.update("completedClasses", com.google.firebase.firestore.FieldValue.arrayUnion(classItem.title))
+                            .addOnSuccessListener {
+                                Log.d("ScheduleViewModel", "Class title added to completedClasses")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("ScheduleViewModel", "Error adding title to completedClasses", e)
+                            }
+
                     }
                     .addOnFailureListener { e ->
-                        Log.e("Firestore", "Error obteniendo clases disponibles", e)
-                        _isLoading.value = false // Termina la carga en caso de error
+                        Log.e("ScheduleViewModel", "Error adding class", e)
                     }
             }
             .addOnFailureListener { e ->
-                Log.e("Firestore", "Error obteniendo datos del usuario", e)
-                _isLoading.value = false // Termina la carga en caso de error
+                Log.e("ScheduleViewModel", "Error fetching scheduleClasses", e)
             }
     }
 

@@ -20,49 +20,61 @@ import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
 import java.util.Calendar
-import com.example.scheduleit.components.LoadScreen
+import com.example.scheduleit.models.Class
 
 @Composable
 fun Schedule(navController: NavController, viewModel: ScheduleViewModel = viewModel()) {
-
-    val isLoading by viewModel.isLoading.collectAsState()
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (isLoading) {
-            LoadScreen(modifier = Modifier.fillMaxSize())
-        }
-
-        if (!isLoading) {
-            Scaffold(
-                topBar = { Header() },
-                bottomBar = { BottomNavBar(navController) }
-            ) { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White)
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        topBar = { Header() },
+        bottomBar = { BottomNavBar(navController) }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
+                    shape = RoundedCornerShape(32.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = {},
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
-                        shape = RoundedCornerShape(32.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Class Scheduler", color = Color.White, fontSize = 16.sp)
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    FilterSection(viewModel)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = "Class Scheduler", color = Color.White, fontSize = 16.sp)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                FilterSection(viewModel)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(
+                    modifier = Modifier
+                        .height (400.dp)
+                        .fillMaxWidth()
+                ) {
                     ClassList(viewModel = viewModel)
+                }
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Box(
+                    modifier = Modifier
+                        .height (100.dp)
+                        .fillMaxWidth()
+                ) {
+                    ConfirmSelectionButton(viewModel = viewModel)
                 }
             }
         }
     }
 }
+
+
 
 @Composable
 fun FilterSection(viewModel: ScheduleViewModel) {
@@ -85,9 +97,15 @@ fun DateFilterButton(context: Context, viewModel: ScheduleViewModel) {
     var selectedDate by remember { mutableStateOf(viewModel.dateFilter.value) }
 
     val datePickerDialog = DatePickerDialog(
-        context, { _, y, m, d -> selectedDate = "$d/${m + 1}/$y"; viewModel.setDateFilter(selectedDate) },
+        context,
+        { _, y, m, d ->
+            selectedDate = "$d/${m + 1}/$y"
+            viewModel.setDateFilter(selectedDate)
+        },
         year, month, day
     )
+
+    datePickerDialog.datePicker.minDate = calendar.timeInMillis
 
     Button(
         onClick = { datePickerDialog.show() },
@@ -98,10 +116,33 @@ fun DateFilterButton(context: Context, viewModel: ScheduleViewModel) {
     }
 }
 
+
 @Composable
 fun HourFilterButton(viewModel: ScheduleViewModel) {
+    val selectedDate = viewModel.dateFilter.value
+    val today = remember {
+        val calendar = Calendar.getInstance()
+        "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(Calendar.YEAR)}"
+    }
+
+    val currentHour = remember {
+        Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    }
+
+    val isToday = selectedDate == today
+
+    val hours = remember(selectedDate) {
+        (8..20 step 2)
+            .filter { hour -> !isToday || hour > currentHour }
+            .map { hour ->
+                val isPM = hour >= 12
+                val displayHour = if (hour == 12 || hour == 0) 12 else hour % 12
+                val period = if (isPM) "PM" else "AM"
+                String.format("%02d:00 %s", displayHour, period)
+            }
+    }
+
     var expanded by remember { mutableStateOf(false) }
-    val hours = listOf("08:00 AM", "10:00 AM", "02:00 PM", "04:00 PM")
     var selectedHour by remember { mutableStateOf(viewModel.hourFilter.value) }
 
     Box {
@@ -114,16 +155,21 @@ fun HourFilterButton(viewModel: ScheduleViewModel) {
         }
 
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            hours.forEach { hour ->
-                DropdownMenuItem(text = { Text(hour) }, onClick = {
-                    selectedHour = hour
-                    viewModel.setHourFilter(hour)
-                    expanded = false
-                })
+            if (hours.isEmpty()) {
+                DropdownMenuItem(text = { Text("No available hours") }, onClick = {})
+            } else {
+                hours.forEach { hour ->
+                    DropdownMenuItem(text = { Text(hour) }, onClick = {
+                        selectedHour = hour
+                        viewModel.setHourFilter(hour)
+                        expanded = false
+                    })
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun ClassList(viewModel: ScheduleViewModel = viewModel()) {
@@ -131,7 +177,7 @@ fun ClassList(viewModel: ScheduleViewModel = viewModel()) {
 
     LazyColumn {
         items(classes) { classItem ->
-            ClassItem(className = classItem.title.toString(), classLevel = classItem.level.toString())
+            ClassItem(classItem = classItem)
         }
     }
 }
@@ -139,7 +185,12 @@ fun ClassList(viewModel: ScheduleViewModel = viewModel()) {
 
 
 @Composable
-fun ClassItem(className: String, classLevel: String) {
+fun ClassItem(classItem: Class, viewModel: ScheduleViewModel = viewModel()) {
+    val classSelections = viewModel.classSelections.collectAsState().value
+    val selectedCount = classSelections.values.count { it }
+    val isChecked = classSelections[classItem.id] ?: false
+    val isEnabled = isChecked || selectedCount == 0
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,13 +201,61 @@ fun ClassItem(className: String, classLevel: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
-            checked = false,
-            onCheckedChange = {},
-            colors = CheckboxDefaults.colors(checkedColor = Color(0xFF74708C), uncheckedColor = Color(0xFF74708C))
+            checked = isChecked,
+            onCheckedChange = { checked ->
+                viewModel.toggleClassSelection(classItem.id!!, checked)
+            },
+            enabled = isEnabled,
+            colors = CheckboxDefaults.colors(
+                checkedColor = Color(0xFF8473A8),
+                uncheckedColor = Color(0xFF74708C)
+            )
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = "IN$classLevel |", fontSize = 14.sp, color = Color.Black)
+        Text(text = "IN ${classItem.level} |", fontSize = 14.sp, color = Color.Black)
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = className, fontSize = 14.sp, color = Color.Black)
+        Text(text = classItem.title.toString(), fontSize = 14.sp, color = Color.Black)
     }
 }
+
+
+@Composable
+fun ConfirmSelectionButton(viewModel: ScheduleViewModel) {
+    val context = LocalContext.current
+
+    val classSelections by viewModel.classSelections.collectAsState()
+    val allClasses by viewModel.classes.collectAsState()
+
+    val selectedClassObjects = allClasses
+        .filter { classSelections[it.id] == true }
+        .take(1)
+
+    val selectedDate = viewModel.dateFilter.value
+    val selectedHour = viewModel.hourFilter.value
+
+    val isButtonEnabled = selectedDate != "Date" && selectedHour != "Time" && selectedClassObjects.isNotEmpty()
+
+    Button(
+        onClick = {
+            val userEmail = viewModel.user.value?.email ?: return@Button
+            selectedClassObjects.forEach { classItem ->
+                viewModel.addClassToSchedule(userEmail, classItem, selectedDate, selectedHour)
+            }
+        },
+        enabled = isButtonEnabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isButtonEnabled) Color(0xFF8473A8) else Color.Gray
+        ),
+        shape = RoundedCornerShape(32.dp)
+    ) {
+        Text(
+            text = "Confirm Selection",
+            color = Color.White,
+            fontSize = 16.sp
+        )
+    }
+}
+

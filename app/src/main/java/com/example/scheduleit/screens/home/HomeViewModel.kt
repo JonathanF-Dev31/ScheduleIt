@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.example.scheduleit.models.Class
+import com.google.firebase.firestore.FieldValue
 
 class HomeViewModel: ViewModel() {
     private var db: FirebaseFirestore = Firebase.firestore
@@ -67,17 +68,26 @@ class HomeViewModel: ViewModel() {
 
     fun removeClassFromUserSchedule(classTitle: String) {
         val userEmail = auth.currentUser?.email ?: return
+        val userDocRef = db.collection("users").document(userEmail)
 
-        db.collection("users")
-            .document(userEmail)
+        userDocRef
             .collection("scheduleClasses")
             .document(classTitle)
             .delete()
             .addOnSuccessListener {
-                Log.d("Firestore", "Clase eliminada correctamente")
+                Log.d("Firestore", "Clase eliminada correctamente de scheduleClasses")
+
+                userDocRef.update("completedClasses", FieldValue.arrayRemove(classTitle))
+                    .addOnSuccessListener {
+                        Log.d("Firestore", "Clase eliminada del array completedClasses")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firestore", "Error al eliminar del array completedClasses", e)
+                    }
             }
             .addOnFailureListener { e ->
-                Log.e("Firestore", "Error al eliminar clase", e)
+                Log.e("Firestore", "Error al eliminar clase de scheduleClasses", e)
             }
     }
+
 }
