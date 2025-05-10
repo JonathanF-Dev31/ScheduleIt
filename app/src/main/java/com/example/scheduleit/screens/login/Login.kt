@@ -89,6 +89,7 @@ fun LoginBodyContent(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor =  Color(0xFFFFFFFF),
                 unfocusedContainerColor =  Color(0xFFFFFFFF),
+                errorContainerColor = Color(0x72C4B2D3),
                 focusedIndicatorColor = Color(0xFF8F5BBD),
                 unfocusedIndicatorColor = Color(0xFF89858E),
                 errorIndicatorColor = Color(0xFFFF0000)
@@ -124,6 +125,7 @@ fun LoginBodyContent(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFFFFFFFF),
                 unfocusedContainerColor = Color(0xFFFFFFFF),
+                errorContainerColor = Color(0x72C4B2D3),
                 focusedIndicatorColor = Color(0xFF8F5BBD),
                 unfocusedIndicatorColor = Color(0xFF89858E),
                 errorIndicatorColor = Color(0xFFFF0000)

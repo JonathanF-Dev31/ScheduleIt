@@ -71,7 +71,7 @@ class HomeViewModel: ViewModel() {
         db.collection("users")
             .document(userEmail)
             .collection("scheduleClasses")
-            .document(classTitle) // Aquí el ID del documento es el título, como "Class 1"
+            .document(classTitle)
             .delete()
             .addOnSuccessListener {
                 Log.d("Firestore", "Clase eliminada correctamente")

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.scheduleit.components.LoadScreen
 
 /**
  * Created by JonathanDev31 on 19/03/2025
@@ -35,22 +36,36 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun Home(navController: NavController) {
+    var isLoading by remember { mutableStateOf(true) }
 
-    Scaffold(
-        topBar = { Header() },
-        bottomBar = { BottomNavBar(navController) }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            HomeBodyContent(modifier = Modifier.padding(paddingValues))
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(500)
+        isLoading = false
+    }
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)
+    ) {
+        if (isLoading) {
+            LoadScreen(modifier = Modifier.fillMaxSize())
+        }
+
+        if (!isLoading) {
+            Scaffold(
+                topBar = { Header() },
+                bottomBar = { BottomNavBar(navController) }
+            ) { paddingValues ->
+                HomeBodyContent(modifier = Modifier
+                    .padding(paddingValues)
+                    .background(Color.White)
+                )
+            }
         }
     }
 }
+
+
 
 @Composable
 fun HomeBodyContent(modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel()) {

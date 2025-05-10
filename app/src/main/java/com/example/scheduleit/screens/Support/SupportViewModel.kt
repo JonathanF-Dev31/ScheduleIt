@@ -1,36 +1,74 @@
-package com.example.scheduleit.screens
+package com.example.scheduleit.screens.Support
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
+import com.example.scheduleit.components.LoadScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
+// ViewModel para manejar los mensajes del chat
+class SupportViewModel : ViewModel() {
+
+    // Lista de mensajes del chat
+    private val _chatMessages = MutableStateFlow<List<String>>(emptyList())
+    val chatMessages: StateFlow<List<String>> get() = _chatMessages
+
+    // Función para enviar un mensaje
+    fun sendMessage(message: String) {
+        // Añadir el mensaje al listado de chat
+        _chatMessages.value = _chatMessages.value + message
+    }
+}
+
+// Composable que muestra la interfaz de usuario del soporte
 @Composable
 fun Support(navController: NavController) {
+    val viewModel: SupportViewModel = viewModel()
 
+    var isLoading by remember { mutableStateOf(true) }
 
-    Scaffold(
-        topBar = { Header() },
-        bottomBar = { BottomNavBar(navController) }
-    ) { paddingValues ->
-        SupportBodyContent(Modifier.padding(paddingValues))
+    // Simulamos una carga inicial
+    LaunchedEffect(true) {
+        delay(500)
+        isLoading = false
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (isLoading) {
+            LoadScreen(modifier = Modifier.fillMaxSize())
+        } else {
+            Scaffold(
+                topBar = { Header() },
+                bottomBar = { BottomNavBar(navController) }
+            ) { paddingValues ->
+                SupportBodyContent(modifier = Modifier.padding(paddingValues), viewModel)
+            }
+        }
     }
 }
 
 @Composable
-fun SupportBodyContent(modifier: Modifier = Modifier) {
+fun SupportBodyContent(modifier: Modifier = Modifier, viewModel: SupportViewModel) {
+    // Recibimos el estado de los mensajes desde el ViewModel
+    val chatMessages by viewModel.chatMessages.collectAsState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -49,12 +87,23 @@ fun SupportBodyContent(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ChatBubble(text = "Lorem ipsum...", isUser = false, backgroundColor = Color(0xFFD9D9D9))
-        ChatBubble(text = "Lorem ipsum...", isUser = true, backgroundColor = Color(0xFF9E99BF))
+        // Mostrar todos los mensajes del chat
+        chatMessages.forEachIndexed { index, message ->
+            ChatBubble(
+                text = message,
+                isUser = index % 2 != 0,
+                backgroundColor = if (index % 2 == 0) Color(0xFFD9D9D9) else Color(0xFF9E99BF)
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ChatInput { }
+        // Campo de entrada de texto para enviar mensajes
+        ChatInput { message ->
+            if (message.isNotBlank()) {
+                viewModel.sendMessage(message)
+            }
+        }
     }
 }
 
@@ -98,13 +147,11 @@ fun ChatInput(onMessageSend: (String) -> Unit) {
             IconButton(onClick = {
                 if (text.isNotBlank()) {
                     onMessageSend(text)
-                    text = ""
+                    text = "" // Limpiar el campo de texto después de enviar
                 }
             }) {
-                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", tint = Color(0xFFD9D9D9))
+                Icon(Icons.Filled.Send, contentDescription = "Send", tint = Color(0xFFD9D9D9))
             }
         }
     )
 }
-
-
