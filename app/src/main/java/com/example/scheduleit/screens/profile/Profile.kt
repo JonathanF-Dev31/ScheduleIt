@@ -30,21 +30,32 @@ import android.net.Uri
 import androidx.compose.runtime.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-
+import com.example.scheduleit.components.LoadScreen
 @Composable
 fun Profile(navController: NavController) {
+    var isLoading by remember { mutableStateOf(true) }
 
-    Scaffold(
-        topBar = {
-            Header()
-        },
-        bottomBar = {
-            BottomNavBar(navController)
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(700)
+        isLoading = false
+    }
+
+    if (isLoading) {
+        LoadScreen(modifier = Modifier.fillMaxSize())
+    } else {
+        Scaffold(
+            topBar = {
+                Header()
+            },
+            bottomBar = {
+                BottomNavBar(navController)
+            }
+        ) { paddingValues ->
+            ProfileBodyContent(Modifier.padding(paddingValues), navController)
         }
-    ) { paddingValues ->
-        ProfileBodyContent(Modifier.padding(paddingValues), navController)
     }
 }
+
 
 
 @Composable

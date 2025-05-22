@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LoadScreen(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color(0xAAFFFFFF), // Fondo semitransparente
+    backgroundColor: Color = Color(0xAAFFFFFF),
     loaderColor: Color = Color(0xFF8473A8)
 ) {
     Box(

@@ -21,53 +21,66 @@ import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
 import java.util.Calendar
 import com.example.scheduleit.models.Class
+import com.example.scheduleit.components.LoadScreen
 
 @Composable
 fun Schedule(navController: NavController, viewModel: ScheduleViewModel = viewModel()) {
-    Scaffold(
-        topBar = { Header() },
-        bottomBar = { BottomNavBar(navController) }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            Column(
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(400)
+        isLoading = false
+    }
+
+    if (isLoading) {
+        LoadScreen(modifier = Modifier.fillMaxSize())
+    } else {
+        Scaffold(
+            topBar = { Header() },
+            bottomBar = { BottomNavBar(navController) }
+        ) { paddingValues ->
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(paddingValues)
+                    .background(Color.White)
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {},
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
-                    shape = RoundedCornerShape(32.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = "Class Scheduler", color = Color.White, fontSize = 16.sp)
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                FilterSection(viewModel)
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Box(
+                Column(
                     modifier = Modifier
-                        .height (400.dp)
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ClassList(viewModel = viewModel)
-                }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8473A8)),
+                        shape = RoundedCornerShape(32.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Class Scheduler", color = Color.White, fontSize = 16.sp)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    FilterSection(viewModel)
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(5.dp))
+                    Box(
+                        modifier = Modifier
+                            .height (400.dp)
+                            .fillMaxWidth()
+                    ) {
+                        ClassList(viewModel = viewModel)
+                    }
 
-                Box(
-                    modifier = Modifier
-                        .height (100.dp)
-                        .fillMaxWidth()
-                ) {
-                    ConfirmSelectionButton(viewModel = viewModel)
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .height (100.dp)
+                            .fillMaxWidth()
+                    ) {
+                        ConfirmSelectionButton(viewModel = viewModel)
+                    }
                 }
             }
         }

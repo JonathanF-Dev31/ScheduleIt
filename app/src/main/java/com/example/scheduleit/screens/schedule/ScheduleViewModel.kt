@@ -72,11 +72,11 @@ class ScheduleViewModel: ViewModel() {
             .addSnapshotListener { classSnapshot, e ->
                 if (e != null) {
                     Log.e("Firestore", "Error escuchando cambios en las clases", e)
+                    _isLoading.value = false
                     return@addSnapshotListener
                 }
 
                 val completedClasses = user.value?.completedClasses ?: emptyList()
-
                 val allClasses = classSnapshot?.documents ?: emptyList()
 
                 val notCompletedClasses = allClasses.filter { classDoc ->
@@ -91,8 +91,10 @@ class ScheduleViewModel: ViewModel() {
                 _completedClasses.value = remainingClasses
                 _classes.value = remainingClasses
 
+                _isLoading.value = false
             }
     }
+
 
     fun addClassToSchedule(userEmail: String, classItem: Class, date: String, hour: String) {
         val userDocRef = db.collection("users").document(userEmail)
