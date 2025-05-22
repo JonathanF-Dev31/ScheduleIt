@@ -3,18 +3,17 @@ package com.example.scheduleit.screens
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import com.example.scheduleit.screens.home.HomeViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.delay
 
+class ProgressViewModel(private val homeViewModel: HomeViewModel) : ViewModel() {
 
-class ProgressViewModel : ViewModel() {
-
-    private val courseData = mapOf(
-        "A1" to Pair(72, 72),
-        "A2" to Pair(72, 60),
-        "B1" to Pair(72, 15)
+    private val totalClassesByLevel = mapOf(
+        "A1" to 4,
+        "A2" to 3,
+        "B1" to 2,
+        "B2" to 2,
+        "C1" to 2
     )
 
     val levelProgress = mutableStateOf<Map<String, Int>>(emptyMap())
@@ -22,33 +21,41 @@ class ProgressViewModel : ViewModel() {
     val isLoading = mutableStateOf(true)
 
     init {
-        fetchProgress()
+        fetchProgressFromUser()
     }
 
-    private fun fetchProgress() {
+    private fun fetchProgressFromUser() {
         viewModelScope.launch {
-            delay(600)
-            val progressData = calculateProgress()
-            withContext(Dispatchers.Main) {
-                levelProgress.value = progressData.first
-                levelClassesTaken.value = progressData.second
-                isLoading.value = false
+            homeViewModel.user.collect { user ->
+                user?.let {
+                    val completed = user.completedClasses ?: arrayListOf()
+                    val progressData = calculateProgressFromCompleted(completed)
+                    levelProgress.value = progressData.first
+                    levelClassesTaken.value = progressData.second
+                    isLoading.value = false
+                }
             }
         }
     }
 
-    private fun calculateProgress(): Pair<Map<String, Int>, Map<String, String>> {
-        val progress = mutableMapOf<String, Int>()
-        val classesTaken = mutableMapOf<String, String>()
+    private fun calculateProgressFromCompleted(completedClasses: List<String>): Pair<Map<String, Int>, Map<String, String>> {
+        val levelProgressMap = mutableMapOf<String, Int>()
+        val classesTakenMap = mutableMapOf<String, String>()
 
-        for ((level, pair) in courseData) {
-            val total = pair.first
-            val completed = pair.second
-            val percentage = (completed.toFloat() / total * 100).toInt()
-            progress[level] = percentage
-            classesTaken[level] = "$completed of $total"
+        val completedByLevel = mutableMapOf<String, Int>()
+        completedClasses.forEach { title ->
+            val level = title.substringBefore(" ").uppercase()
+            completedByLevel[level] = (completedByLevel[level] ?: 0) + 1
         }
 
-        return Pair(progress, classesTaken)
+        for ((level, total) in totalClassesByLevel) {
+            val completed = completedByLevel[level] ?: 0
+            val percentage = (completed.toFloat() / total * 100).toInt()
+            levelProgressMap[level] = percentage
+            classesTakenMap[level] = "$completed of $total"
+        }
+
+        return Pair(levelProgressMap, classesTakenMap)
     }
 }
+

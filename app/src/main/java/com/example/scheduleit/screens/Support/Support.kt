@@ -1,42 +1,33 @@
 package com.example.scheduleit.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
 import com.example.scheduleit.components.LoadScreen
+import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-
-class SupportViewModel : ViewModel() {
-
-    private val _chatMessages = MutableStateFlow<List<String>>(emptyList())
-    val chatMessages: StateFlow<List<String>> get() = _chatMessages
-
-    fun sendMessage(message: String) {
-        _chatMessages.value = _chatMessages.value + message
-    }
-}
+import androidx.compose.runtime.*
 
 @Composable
 fun Support(navController: NavController) {
-    val viewModel: SupportViewModel = viewModel()
-
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(true) {
@@ -52,22 +43,21 @@ fun Support(navController: NavController) {
                 topBar = { Header() },
                 bottomBar = { BottomNavBar(navController) }
             ) { paddingValues ->
-                SupportBodyContent(modifier = Modifier.padding(paddingValues), viewModel = viewModel)
+                ContactBodyContent(modifier = Modifier.padding(paddingValues))
             }
         }
     }
 }
 
 @Composable
-fun SupportBodyContent(modifier: Modifier = Modifier, viewModel: SupportViewModel) {
-    val chatMessages by viewModel.chatMessages.collectAsState()
-
+fun ContactBodyContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
     ) {
         Button(
             onClick = {},
@@ -75,74 +65,74 @@ fun SupportBodyContent(modifier: Modifier = Modifier, viewModel: SupportViewMode
             shape = RoundedCornerShape(32.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Support chat", color = Color.White, fontSize = 16.sp)
+            Text(text = "Contáctanos", color = Color.White, fontSize = 16.sp)
         }
+        Spacer(modifier = Modifier.height(32.dp))
+        ContactRow(
+            icon = Icons.Filled.Call,
+            label = "Teléfono",
+            info = "+57 234 567 8901",
+            link = "tel:+15551234567"
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        ContactRow(
+            icon = Icons.Filled.Email,
+            label = "Correo",
+            info = "academiaIdiomas@ejemplo.com",
+            link = "mailto:contacto@ejemplo.com"
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        ContactRow(
+            icon = Icons.Filled.Chat,
+            label = "WhatsApp",
+            info = "+1 555 765 4321",
+            link = "https://wa.link/a6ernc"
+        )
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
+@Composable
+fun ContactRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    info: String,
+    link: String? = null
+) {
+    val context = LocalContext.current
+    val labelColor = Color(0xFF8473A8)
+    val infoColor = Color(0xFF858181)
 
-        chatMessages.forEachIndexed { index, message ->
-            ChatBubble(
-                text = message,
-                isUser = index % 2 != 0,
-                backgroundColor = if (index % 2 == 0) Color(0xFFD9D9D9) else Color(0xFF9E99BF)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = labelColor,
+            modifier = Modifier.size(32.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = label,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = labelColor
+            )
+            Text(
+                text = info,
+                fontSize = 16.sp,
+                color = infoColor,
+                modifier = if (link != null) {
+                    Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link)).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        context.startActivity(intent)
+                    }
+                } else Modifier
             )
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        ChatInput { message ->
-            if (message.isNotBlank()) {
-                viewModel.sendMessage(message)
-            }
-        }
     }
-}
-
-@Composable
-fun ChatBubble(text: String, isUser: Boolean, backgroundColor: Color) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
-    ) {
-        Box(
-            modifier = Modifier
-                .background(backgroundColor, shape = RoundedCornerShape(16.dp))
-                .padding(12.dp)
-        ) {
-            Text(text = text, color = Color.Black, fontSize = 14.sp)
-        }
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-fun ChatInput(onMessageSend: (String) -> Unit) {
-    var text by remember { mutableStateOf("") }
-
-    OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        label = { Text("Type your message", color = Color(0xFF54505A)) },
-        textStyle = TextStyle(color = Color(0xFF8B8B8B)),
-        shape = RoundedCornerShape(32.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Black,
-            unfocusedIndicatorColor = Color.Black,
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        trailingIcon = {
-            IconButton(onClick = {
-                if (text.isNotBlank()) {
-                    onMessageSend(text)
-                    text = ""
-                }
-            }) {
-                Icon(Icons.Filled.Send, contentDescription = "Send", tint = Color(0xFFD9D9D9))
-            }
-        }
-    )
 }

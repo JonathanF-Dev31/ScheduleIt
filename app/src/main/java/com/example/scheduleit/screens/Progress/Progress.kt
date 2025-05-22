@@ -2,6 +2,8 @@ package com.example.scheduleit.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,13 +16,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
-
+import com.example.scheduleit.screens.home.HomeViewModel
 
 @Composable
-fun Progress(navController: NavController, viewModel: ProgressViewModel = viewModel()) {
-    val isLoading by viewModel.isLoading
-    val levelProgress by viewModel.levelProgress
-    val levelClassesTaken by viewModel.levelClassesTaken
+fun Progress(
+    navController: NavController,
+    homeViewModel: HomeViewModel = viewModel()
+) {
+    val progressViewModel = remember { ProgressViewModel(homeViewModel) }
+
+    val isLoading by progressViewModel.isLoading
+    val levelProgress by progressViewModel.levelProgress
+    val levelClassesTaken by progressViewModel.levelClassesTaken
 
     Scaffold(
         topBar = { Header() },
@@ -40,8 +47,7 @@ fun Progress(navController: NavController, viewModel: ProgressViewModel = viewMo
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(horizontal = 16.dp)
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -56,35 +62,46 @@ fun Progress(navController: NavController, viewModel: ProgressViewModel = viewMo
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    val totalProgress = if (levelProgress.isNotEmpty())
-                        levelProgress.values.sum() / levelProgress.size
-                    else 0
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        val totalProgress = if (levelProgress.isNotEmpty())
+                            levelProgress.values.sum() / levelProgress.size
+                        else 0
 
-                    OverallProgressIndicator(totalProgress)
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OverallProgressIndicator(totalProgress)
+                        }
 
-                    Spacer(modifier = Modifier.height(24.dp))
 
-                    Text(
-                        text = "Progress by level",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Progress by level",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
+                        )
 
-                    // Lista de niveles
-                    levelProgress.forEach { (level, progress) ->
-                        val classes = levelClassesTaken[level] ?: ""
-                        LevelProgress(level, progress, classes)
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        levelProgress.forEach { (level, progress) ->
+                            val classes = levelClassesTaken[level] ?: ""
+                            LevelProgress(level, progress, classes)
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
             }
         }
     }
 }
-
-
 
 @Composable
 fun OverallProgressIndicator(progressPercent: Int) {
@@ -94,7 +111,7 @@ fun OverallProgressIndicator(progressPercent: Int) {
         modifier = Modifier.size(180.dp)
     ) {
         CircularProgressIndicator(
-            progress = progress,
+            progress = { progress },
             strokeWidth = 12.dp,
             color = Color(0xFFB400CC),
             modifier = Modifier.fillMaxSize()
