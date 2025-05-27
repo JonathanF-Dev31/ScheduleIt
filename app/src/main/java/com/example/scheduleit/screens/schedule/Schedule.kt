@@ -2,6 +2,7 @@ package com.example.scheduleit.screens.schedule
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,8 @@ import com.example.scheduleit.components.Header
 import java.util.Calendar
 import com.example.scheduleit.models.Class
 import com.example.scheduleit.components.LoadScreen
+import androidx.compose.foundation.lazy.itemsIndexed
+
 
 @Composable
 fun Schedule(navController: NavController, viewModel: ScheduleViewModel = viewModel()) {
@@ -109,16 +112,27 @@ fun DateFilterButton(context: Context, viewModel: ScheduleViewModel) {
     val day = calendar.get(Calendar.DAY_OF_MONTH)
     var selectedDate by remember { mutableStateOf(viewModel.dateFilter.value) }
 
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _, y, m, d ->
-            selectedDate = "$d/${m + 1}/$y"
-            viewModel.setDateFilter(selectedDate)
-        },
-        year, month, day
-    )
-
-    datePickerDialog.datePicker.minDate = calendar.timeInMillis
+    // Crear el diálogo
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, y, m, d ->
+                val selectedCal = Calendar.getInstance().apply {
+                    set(y, m, d)
+                }
+                val dayOfWeek = selectedCal.get(Calendar.DAY_OF_WEEK)
+                if (dayOfWeek in Calendar.MONDAY..Calendar.FRIDAY) {
+                    selectedDate = "$d/${m + 1}/$y"
+                    viewModel.setDateFilter(selectedDate)
+                } else {
+                    Toast.makeText(context, "Select a weekday (Mon–Fri)", Toast.LENGTH_SHORT).show()
+                }
+            },
+            year, month, day
+        ).apply {
+            datePicker.minDate = calendar.timeInMillis
+        }
+    }
 
     Button(
         onClick = { datePickerDialog.show() },
@@ -128,7 +142,6 @@ fun DateFilterButton(context: Context, viewModel: ScheduleViewModel) {
         Text(text = selectedDate, fontSize = 14.sp, color = Color.Black)
     }
 }
-
 
 @Composable
 fun HourFilterButton(viewModel: ScheduleViewModel) {
@@ -183,26 +196,28 @@ fun HourFilterButton(viewModel: ScheduleViewModel) {
     }
 }
 
-
 @Composable
 fun ClassList(viewModel: ScheduleViewModel = viewModel()) {
     val classes by viewModel.completedClasses.collectAsState()
-
     LazyColumn {
-        items(classes) { classItem ->
-            ClassItem(classItem = classItem)
+        itemsIndexed(classes) { index, classItem ->
+            ClassItem(
+                classItem = classItem,
+                isFirst = index == 0,
+                viewModel = viewModel
+            )
         }
     }
 }
 
-
-
 @Composable
-fun ClassItem(classItem: Class, viewModel: ScheduleViewModel = viewModel()) {
+fun ClassItem(
+    classItem: Class,
+    isFirst: Boolean,
+    viewModel: ScheduleViewModel = viewModel()
+) {
     val classSelections = viewModel.classSelections.collectAsState().value
-    val selectedCount = classSelections.values.count { it }
     val isChecked = classSelections[classItem.id] ?: false
-    val isEnabled = isChecked || selectedCount == 0
 
     Row(
         modifier = Modifier
@@ -218,10 +233,12 @@ fun ClassItem(classItem: Class, viewModel: ScheduleViewModel = viewModel()) {
             onCheckedChange = { checked ->
                 viewModel.toggleClassSelection(classItem.id!!, checked)
             },
-            enabled = isEnabled,
+            enabled = isFirst,
             colors = CheckboxDefaults.colors(
                 checkedColor = Color(0xFF8473A8),
-                uncheckedColor = Color(0xFF74708C)
+                uncheckedColor = Color(0xFF74708C),
+                disabledCheckedColor = Color.LightGray,
+                disabledUncheckedColor = Color.LightGray
             )
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -230,7 +247,6 @@ fun ClassItem(classItem: Class, viewModel: ScheduleViewModel = viewModel()) {
         Text(text = classItem.title.toString(), fontSize = 14.sp, color = Color.Black)
     }
 }
-
 
 @Composable
 fun ConfirmSelectionButton(viewModel: ScheduleViewModel) {
@@ -271,4 +287,3 @@ fun ConfirmSelectionButton(viewModel: ScheduleViewModel) {
         )
     }
 }
-
