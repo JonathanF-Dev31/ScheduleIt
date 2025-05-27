@@ -65,7 +65,6 @@ class HomeViewModel: ViewModel() {
             }
     }
 
-
     fun removeClassFromUserSchedule(classTitle: String) {
         val userEmail = auth.currentUser?.email ?: return
         val userDocRef = db.collection("users").document(userEmail)

@@ -73,6 +73,8 @@ class ProfileViewModel : ViewModel() {
                 input.copyTo(output)
             }
         }
+
+
         return Uri.fromFile(file)
     }
 
