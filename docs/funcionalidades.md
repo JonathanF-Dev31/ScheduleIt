@@ -6,16 +6,12 @@ Las siguientes es una lista de las funcionalidades disponibles para el usuario d
 
 2. La aplicación debe mostrar un calendario con las clases programadas, permitiendo a los usuarios ver fácilmente sus próximas clases.
 
-3. La aplicación debe enviar recordatorios automáticos a los usuarios un dia antes y 3 horas antes de sus clases.
+3. La aplicación debe contar con enlaces de redirección para resolver dudas y problemas de atención rápida.
 
-4. La aplicación debe con un chatbot permita resolver dudas y problemas de atención rápida.
+4. La aplicación debe permitir a los usuarios realizar un seguimiento de su progreso en los cursos, mostrando estadisticas actualizadas en graficos y porcentaje tanto del avanze general del curso de idioma como de los distintos niveles ofertados por la academia.
 
-5. La aplicación debe registrar un historial detallado de las clases tomadas por los usuarios, incluyendo la fecha, hora, profesor.
+5. La aplicación debe permitir a los usuarios cancelar clases reservadas, siempre y cuando se cumplan las políticas de cancelación establecidas por la academia, es decir que se podra cancelar maximo 6 horas antes de la clase, una vez se supera este limite de tiempo se confirma la clase y el estudiante debe asistir o en caso de inasistencia la clase se pondra como tomada.
 
-6. La aplicación debe permitir a los usuarios realizar un seguimiento de su progreso en los cursos, mostrando métricas de número de clases tomadas, la asistencia y las calificaciones.
+7. La aplicación debe permitir a los usuarios reprogramar clases reservadas, sujeto a la disponibilidad de profesores y aulas, esto mediante la cancelación siguiendo lo estipulado en la politica y reprogramandola según el horario que mas se adecua a los estudiantes.
 
-7. La aplicación debe permitir a los usuarios cancelar clases reservadas, siempre y cuando se cumplan las políticas de cancelación establecidas por la academia.
-
-8. La aplicación debe permitir a los usuarios reprogramar clases reservadas, sujeto a la disponibilidad de profesores y aulas.
-
-9. La aplicación debe permitir a los usuarios crear y gestionar sus perfiles.
+8. La aplicación debe permitir a los usuarios gestionar sus fotos de perfiles.
