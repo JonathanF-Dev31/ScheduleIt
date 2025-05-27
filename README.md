@@ -1,6 +1,6 @@
 # ScheduleIt
 
-ScheduleIt is an Android mobile application designed to optimize students' time management in the organization of their language courses. The app offers an intuitive and easy-to-use interface that allows users to schedule and view classes in real time, receive personalized reminders, access interactive support, view class history and progress, and manage cancellations and rescheduling.
+ScheduleIt is a mobile application for Android designed to optimize students' time management in organizing their language courses. The app offers a minimalist and user-friendly interface that allows users to schedule and view classes in real time, track their progress, access support through direct links, and manage cancellations and rescheduling in accordance with the academy’s policy.
 
 Authors: 
 - Jonathan Fernandez
