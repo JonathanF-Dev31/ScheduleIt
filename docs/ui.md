@@ -16,7 +16,7 @@ La aplicación tendrá la siguientes pantallas
 
 4. Pantalla 4:
 
-![screen4](images/Android%20Compact%20-%203.png)
+![screen4](images/Android%20Compact%20-%203.jpg)
 
 5. Pantalla 5:
 
