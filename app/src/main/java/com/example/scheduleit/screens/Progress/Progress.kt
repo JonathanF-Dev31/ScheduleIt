@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.scheduleit.components.BottomNavBar
 import com.example.scheduleit.components.Header
+import com.example.scheduleit.screens.Progress.ProgressViewModel
 import com.example.scheduleit.screens.home.HomeViewModel
 
 @Composable
@@ -23,7 +24,7 @@ fun Progress(
     navController: NavController,
     homeViewModel: HomeViewModel = viewModel()
 ) {
-    val progressViewModel = remember { ProgressViewModel(homeViewModel) }
+    val progressViewModel = remember { ProgressViewModel() } // sin argumento
 
     val isLoading by progressViewModel.isLoading
     val levelProgress by progressViewModel.levelProgress

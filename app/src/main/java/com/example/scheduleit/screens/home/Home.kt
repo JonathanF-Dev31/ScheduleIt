@@ -162,7 +162,7 @@ fun ScheduledClassCard(
     time: String,
     link: String,
     isLast: Boolean,
-    context: Context, // nuevo parámetro
+    context: Context,
     onRemove: (String) -> Unit
 ) {
     val formatter = DateTimeFormatter.ofPattern("d/M/yyyy h:mm a")
@@ -180,7 +180,7 @@ fun ScheduledClassCard(
 
     Log.d("ScheduledClassCard", "Now: $now, Class: $classDateTime, Diff: $diffHours")
 
-    val canCancel = (diffHours ?: -1) > 5
+    val canCancel = (diffHours ?: -1) > 6
 
     Card(
         shape = RoundedCornerShape(8.dp),

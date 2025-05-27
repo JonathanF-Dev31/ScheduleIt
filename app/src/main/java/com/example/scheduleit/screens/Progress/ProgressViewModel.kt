@@ -1,12 +1,13 @@
-package com.example.scheduleit.screens
+package com.example.scheduleit.screens.Progress
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.scheduleit.screens.home.HomeViewModel
 import kotlinx.coroutines.launch
+import kotlin.collections.iterator
 
-class ProgressViewModel(private val homeViewModel: HomeViewModel) : ViewModel() {
+class ProgressViewModel : ViewModel() {
 
     private val totalClassesByLevel = mapOf(
         "A1" to 4,
@@ -21,21 +22,17 @@ class ProgressViewModel(private val homeViewModel: HomeViewModel) : ViewModel() 
     val isLoading = mutableStateOf(true)
 
     init {
-        fetchProgressFromUser()
+        // Datos estáticos simulados
+        simulateProgress()
     }
 
-    private fun fetchProgressFromUser() {
-        viewModelScope.launch {
-            homeViewModel.user.collect { user ->
-                user?.let {
-                    val completed = user.completedClasses ?: arrayListOf()
-                    val progressData = calculateProgressFromCompleted(completed)
-                    levelProgress.value = progressData.first
-                    levelClassesTaken.value = progressData.second
-                    isLoading.value = false
-                }
-            }
-        }
+    private fun simulateProgress() {
+        // Simula que se tomaron 2 clases en A1
+        val completedClasses = listOf("A1 Class 1", "A1 Class 2")
+        val progressData = calculateProgressFromCompleted(completedClasses)
+        levelProgress.value = progressData.first
+        levelClassesTaken.value = progressData.second
+        isLoading.value = false
     }
 
     private fun calculateProgressFromCompleted(completedClasses: List<String>): Pair<Map<String, Int>, Map<String, String>> {
@@ -58,4 +55,3 @@ class ProgressViewModel(private val homeViewModel: HomeViewModel) : ViewModel() 
         return Pair(levelProgressMap, classesTakenMap)
     }
 }
-
