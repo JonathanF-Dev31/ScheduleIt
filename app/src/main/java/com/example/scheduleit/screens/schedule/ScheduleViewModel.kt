@@ -112,6 +112,7 @@ class ScheduleViewModel: ViewModel() {
                     "level" to classItem.level,
                     "time" to hour,
                     "date" to date,
+                    "link" to classItem.link
                 )
 
                 userDocRef.collection("scheduleClasses")

@@ -52,6 +52,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.Duration
 import android.content.Context
+import androidx.compose.material3.AlertDialog
 
 /**
  * Created by JonathanDev31 on 19/03/2025
@@ -118,6 +119,31 @@ fun HomeBodyContent(modifier: Modifier = Modifier, viewModel: HomeViewModel = vi
             Text(text = "No classes available")
         } else {
             val context = LocalContext.current
+            var showDialog by remember { mutableStateOf(false) }
+            var classToCancel by remember { mutableStateOf<String?>(null) }
+
+            if (showDialog && classToCancel != null) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text("Cancel Class") },
+                    text = { Text("Are you sure you want to cancel this class?") },
+                    confirmButton = {
+                        Button(onClick = {
+                            viewModel.removeClassFromUserSchedule(classToCancel!!)
+                            showDialog = false
+                        }) {
+                            Text("Yes")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { showDialog = false }) {
+                            Text("No")
+                        }
+                    }
+                )
+            }
+
+
             LazyColumn {
                 itemsIndexed(classes) { index, classItem ->
                     val isLast = index == classes.lastIndex
@@ -133,7 +159,8 @@ fun HomeBodyContent(modifier: Modifier = Modifier, viewModel: HomeViewModel = vi
                         context = context,
                         onRemove = { classId ->
                             if (isLast) {
-                                viewModel.removeClassFromUserSchedule(classId)
+                                classToCancel = classId
+                                showDialog = true
                             } else {
                                 Toast.makeText(
                                     context,
@@ -145,8 +172,6 @@ fun HomeBodyContent(modifier: Modifier = Modifier, viewModel: HomeViewModel = vi
                     )
                 }
             }
-
-
         }
     }
 }
